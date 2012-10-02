@@ -163,15 +163,6 @@
       assert_equals(touch.clientX, touch.pageX - window.pageXOffset, "touch.clientX is touch.pageX - window.pageXOffset.");
       assert_equals(touch.clientY, touch.pageY - window.pageYOffset, "touch.clientY is touch.pageY - window.pageYOffset.");
     }
-    
-    function check_touch_screenXY(touch) {
-      // We have no reliable way to convert screen co-ordinates to client co-ordinates (due to the unknown
-      // size of any window chrome), but we can validate they're in a consistent region.
-      assert_true(touch.screenX >= touch.clientX + window.screenX, "touch.screenX is at least touch.clientX + window.screenX.");
-      assert_true(touch.screenX < window.screen.width, "touch.screenX is less than window.screen.width");
-      assert_true(touch.screenY >= touch.clientY + window.screenY, "touch.screenY is at least touch.clientY + window.screenY.");
-      assert_true(touch.screenY < window.screen.height, "touch.screenX is less than window.screen.width");
-    }
 
     function run() {
       var target0 = document.getElementById("target0");
@@ -276,9 +267,9 @@
         test(function() { 
           check_touch_clientXY(t); 
         }, "touchstart: touch clientX/clientY is consistent with pageX/pageY");
-        test(function() { 
-          check_touch_screenXY(t);
-        }, "touchstart: touch screenX/screenY is consistent with clientX/clientY");
+        // Note we don't bother testing screenX/screenY values - there's no reliable way to
+        // verify they are consistent with clientX/clientY (due to unknown amount of window
+        // chrome), and also various forms of scaling mean they are in different units.
       });
 
       on_event(target0, "touchmove", function onTouchMove(ev) {
@@ -324,9 +315,6 @@
         test(function() { 
           check_touch_clientXY(tt); 
         }, "touchmove: touch clientX/clientY is consistent with pageX/pageY");
-        test(function() { 
-          check_touch_screenXY(tt);
-        }, "touchmove: touch screenX/screenY is consistent with clientX/clientY");
 
       });
 
@@ -369,9 +357,6 @@
         test(function() { 
           check_touch_clientXY(t); 
         }, "touchend: touch clientX/clientY is consistent with pageX/pageY");
-        test(function() { 
-          check_touch_screenXY(t);
-        }, "touchend: touch screenX/screenY is consistent with clientX/clientY");
 
         done();
       });
